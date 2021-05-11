@@ -1,0 +1,71 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 2539739 */
+  src: url('iconfont.woff2?t=1620697929040') format('woff2'),
+       url('iconfont.woff?t=1620697929040') format('woff'),
+       url('iconfont.ttf?t=1620697929040') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-account:before {
+  content: "\e7b2";
+}
+
+.icon-favorites:before {
+  content: "\e7b3";
+}
+
+.icon-xinxibar_zhanghu:before {
+  content: "\e7c8";
+}
+
+.icon-AddProducts:before {
+  content: "\e7ca";
+}
+
+.icon-all:before {
+  content: "\e6ef";
+}
+
+.icon-editor:before {
+  content: "\e6f6";
+}
+
+.icon-add:before {
+  content: "\e742";
+}
+
+.icon-confirm:before {
+  content: "\e749";
+}
+
+.icon-password:before {
+  content: "\e75b";
+}
+
+.icon-Rightarrow:before {
+  content: "\e761";
+}
+
+.icon-seleted:before {
+  content: "\e763";
+}
+
+.icon-usercenter:before {
+  content: "\e773";
+}
+
+.icon-unlock:before {
+  content: "\e774";
+}
+
+.icon-calendar-fill:before {
+  content: "\e779";
+}
+
