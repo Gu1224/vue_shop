@@ -21,18 +21,18 @@
         </el-col>
       </el-row>
       <!-- 用户列表区域 -->
-      <el-table :data="userList" border stripe>
-        <el-table-column type="index"></el-table-column>
-        <el-table-column label="姓名" prop="username"></el-table-column>
-        <el-table-column label="邮箱" prop="email"></el-table-column>
-        <el-table-column label="电话" prop="mobile"></el-table-column>
-        <el-table-column label="角色" prop="role_name"></el-table-column>
-        <el-table-column label="状态">
+      <el-table :data="userList" border stripe height="305">
+        <el-table-column type="index" align="center"></el-table-column>
+        <el-table-column label="姓名" prop="username" align="center"></el-table-column>
+        <el-table-column label="邮箱" prop="email" align="center"></el-table-column>
+        <el-table-column label="电话" prop="mobile" align="center"></el-table-column>
+        <el-table-column label="角色" prop="role_name" align="center"></el-table-column>
+        <el-table-column label="状态" align="center">
           <template slot-scope="scope">
             <el-switch v-model="scope.row.mg_state" @change="userStateChange(scope.row)"></el-switch>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="180px">
+        <el-table-column label="操作" width="180px" align="center">
           <template slot-scope="scope">
             <!-- 修改按钮 -->
             <el-button
@@ -50,7 +50,12 @@
             ></el-button>
             <!-- 分配角色按钮 -->
             <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
-              <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+              <el-button
+                type="warning"
+                icon="el-icon-setting"
+                size="mini"
+                @click="setRole(scope.row)"
+              ></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -60,7 +65,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="queryInfo.pagenum"
-        :page-sizes="[2,5,10,50]"
+        :page-sizes="[5,10,50]"
         :page-size="queryInfo.pagesize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
@@ -128,6 +133,35 @@
         <el-button type="primary" @click="editUser()">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 分配角色的对话框 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setRoleDialogVisible"
+      width="50%"
+      @close="editRoleClose()"
+    >
+      <!-- 内容主体区域 -->
+      <el-form label-width="100px" label-position="left">
+        <el-form-item label="当前用户:">{{userInfo.username}}</el-form-item>
+        <el-form-item label="当前角色:">{{userInfo.role_name}}</el-form-item>
+        <el-form-item label="分配新角色:">
+          <el-select v-model="selectedRoleId" placeholder="请选择">
+            <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <!-- 底部按钮区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editRole()">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -160,7 +194,7 @@ export default {
         // 当前页数
         pagenum: 1,
         // 当前每页显示多少条数据
-        pagesize: 2
+        pagesize: 4
       },
       userList: [],
       total: 0,
@@ -168,6 +202,8 @@ export default {
       addDialogVisible: false,
       // 控制修改用户对话框显示与隐藏
       editDialogVisible: false,
+      // 控制分配角色对话框显示与隐藏
+      setRoleDialogVisible: false,
       // 添加用户的表单信息
       addForm: {
         username: '',
@@ -208,7 +244,12 @@ export default {
           { max: 11, message: '手机号长度为 11 个字符', trigger: 'blur' },
           { validator: checkMobile, trigger: 'blur' }
         ]
-      }
+      },
+      // 需要被分配角色的用户信息
+      userInfo: {},
+      // 角色列表
+      roleList: [],
+      selectedRoleId: ''
     }
   },
   // 页面生成调用函数
@@ -222,7 +263,6 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.userList = res.data.users
       this.total = res.data.total
-      console.log(res)
     },
     // 监听pagesize改变事件
     handleSizeChange (newSize) {
@@ -270,12 +310,15 @@ export default {
     editDialogClose () {
       this.$refs.editFormRef.resetFields()
     },
+    // 监听分配角色对话框关闭事件
+    editRoleClose () {
+      this.selectedRoleId = ''
+    },
     // 修改用户信息并提交
     editUser () {
       this.$refs.editFormRef.validate(async valid => {
         if (!valid) return
         const { data: res } = await this.$http.put('users/' + this.editForm.id, this.editForm)
-        console.log(res)
         if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
         this.editDialogVisible = false
         this.$message.success(res.meta.msg)
@@ -295,10 +338,34 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.$message.success(res.meta.msg)
       this.getUserList()
+    },
+    // 显示分配角色对话框
+    setRole (userInfo) {
+      this.setRoleDialogVisible = true
+      this.userInfo = userInfo
+      this.getRoleList()
+    },
+    // 获取用户列表
+    async getRoleList () {
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.roleList = res.data
+    },
+    // 修改角色
+    async editRole () {
+      if (!this.selectedRoleId) return this.$message.error('请选择要分配的角色')
+      const { data: res } = await this.$http.put(`users/${this.userInfo.id}/role`, { rid: this.selectedRoleId })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.getUserList()
+      this.setRoleDialogVisible = false
     }
   }
 }
 </script>
 
 <style lang="less">
+.el-select {
+  width: 130px;
+}
 </style>
