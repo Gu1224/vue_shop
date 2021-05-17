@@ -4,7 +4,7 @@ import {
   Button, Form, FormItem, Input, Message, Container, Header, Aside, Main,
   Menu, Submenu, MenuItem, MenuItemGroup, Breadcrumb, BreadcrumbItem, Card,
   Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, Dialog, MessageBox,
-  Tag, Tree, Select, Option
+  Tag, Tree, Select, Option, Cascader
 } from 'element-ui'
 
 Vue.use(Button)
@@ -34,6 +34,7 @@ Vue.use(Tag)
 Vue.use(Tree)
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(Cascader)
 // message组件挂载到vue原型对象；$message为自定义属性
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
