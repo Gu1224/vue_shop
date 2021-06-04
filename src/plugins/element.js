@@ -4,7 +4,8 @@ import {
   Button, Form, FormItem, Input, Message, Container, Header, Aside, Main,
   Menu, Submenu, MenuItem, MenuItemGroup, Breadcrumb, BreadcrumbItem, Card,
   Row, Col, Table, TableColumn, Switch, Tooltip, Pagination, Dialog, MessageBox,
-  Tag, Tree, Select, Option, Cascader, Alert, Tabs, TabPane
+  Tag, Tree, Select, Option, Cascader, Alert, Tabs, TabPane, InputNumber, Upload,
+  Steps, Step, CheckboxGroup, Checkbox
 } from 'element-ui'
 
 Vue.use(Button)
@@ -38,6 +39,12 @@ Vue.use(Cascader)
 Vue.use(Alert)
 Vue.use(Tabs)
 Vue.use(TabPane)
+Vue.use(InputNumber)
+Vue.use(CheckboxGroup)
+Vue.use(Checkbox)
+Vue.use(Steps)
+Vue.use(Step)
+Vue.use(Upload)
 // message组件挂载到vue原型对象；$message为自定义属性
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

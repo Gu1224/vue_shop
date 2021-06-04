@@ -55,6 +55,7 @@
         :total="total"
       ></el-pagination>
     </el-card>
+
     <!-- 添加分类对话框 -->
     <el-dialog title="添加分类" :visible.sync="addDialogVisible" width="50%" @close="closeAddDialog()">
       <el-form
